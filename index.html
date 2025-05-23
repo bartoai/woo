@@ -482,6 +482,10 @@
             }
         }
         
+        // Make functions available globally after they're defined
+        window.loadModels = loadModels;
+        window.sendMessage = sendMessage;
+        
         // Initialize when page loads
         window.addEventListener('load', initThreeJS);
     </script>
