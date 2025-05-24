@@ -346,6 +346,12 @@
                 showStatus('Please enter both API keys', 'error');
                 return;
             }
+
+            // Check API key format
+            if (!anthropicKey.startsWith('sk-ant-')) {
+                showStatus('Invalid Anthropic API key format. Should start with sk-ant-', 'error');
+                return;
+            }
             
             const sendBtn = document.getElementById('sendBtn');
             sendBtn.disabled = true;
@@ -377,30 +383,20 @@
             Respond as Woody would - be jokey, a bit rude/sarcastic, but still charming. Keep it conversational and in character. 
             Use Woody's typical phrases and mannerisms. Keep the response to 2-3 sentences max.`;
             
-            // Using a CORS proxy - you should replace this with your own backend
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const targetUrl = 'https://api.anthropic.com/v1/messages';
-            
-            const response = await fetch(proxyUrl + targetUrl, {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': apiKey,
-                    'anthropic-version': '2023-06-01',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    model: 'claude-3-sonnet-20240229',
-                    max_tokens: 150,
-                    messages: [{
-                        role: 'user',
-                        content: prompt
-                    }]
+                    prompt: prompt,
+                    anthropicKey: apiKey
                 })
             });
             
             if (!response.ok) {
-                throw new Error(`Anthropic API error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(`API error: ${errorData.error || response.statusText}`);
             }
             
             const data = await response.json();
@@ -408,30 +404,20 @@
         }
 
         async function generateSpeech(text, apiKey) {
-            // Using a CORS proxy - you should replace this with your own backend
-            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const targetUrl = 'https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM';
-            
-            const response = await fetch(proxyUrl + targetUrl, {
+            const response = await fetch('/api/speech', {
                 method: 'POST',
                 headers: {
-                    'Accept': 'audio/mpeg',
-                    'Content-Type': 'application/json',
-                    'xi-api-key': apiKey,
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     text: text,
-                    model_id: 'eleven_monolingual_v1',
-                    voice_settings: {
-                        stability: 0.5,
-                        similarity_boost: 0.8
-                    }
+                    elevenLabsKey: apiKey
                 })
             });
             
             if (!response.ok) {
-                throw new Error(`ElevenLabs API error: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(`Speech API error: ${errorData.error || response.statusText}`);
             }
             
             const audioBlob = await response.blob();
