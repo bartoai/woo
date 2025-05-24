@@ -19,7 +19,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM', {
+    // Changed to a male voice ID - "Adam" voice
+    const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/pNInz6obpgDQGcFmaJgB', {
       method: 'POST',
       headers: {
         'Accept': 'audio/mpeg',
