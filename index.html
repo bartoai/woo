@@ -377,12 +377,17 @@
             Respond as Woody would - be jokey, a bit rude/sarcastic, but still charming. Keep it conversational and in character. 
             Use Woody's typical phrases and mannerisms. Keep the response to 2-3 sentences max.`;
             
-            const response = await fetch('https://api.anthropic.com/v1/messages', {
+            // Using a CORS proxy - you should replace this with your own backend
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const targetUrl = 'https://api.anthropic.com/v1/messages';
+            
+            const response = await fetch(proxyUrl + targetUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'x-api-key': apiKey,
-                    'anthropic-version': '2023-06-01'
+                    'anthropic-version': '2023-06-01',
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
                     model: 'claude-3-sonnet-20240229',
@@ -403,12 +408,17 @@
         }
 
         async function generateSpeech(text, apiKey) {
-            const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM', {
+            // Using a CORS proxy - you should replace this with your own backend
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+            const targetUrl = 'https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM';
+            
+            const response = await fetch(proxyUrl + targetUrl, {
                 method: 'POST',
                 headers: {
                     'Accept': 'audio/mpeg',
                     'Content-Type': 'application/json',
-                    'xi-api-key': apiKey
+                    'xi-api-key': apiKey,
+                    'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
                     text: text,
